@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 import json
 import shutil
@@ -206,6 +207,7 @@ def clip_url(
     outputs: list[Path] = []
     with tempfile.TemporaryDirectory(prefix="youtubeclipper_", dir=outdir) as tmp:
         workdir = Path(tmp)
+        run_stamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
         h264_mp4, all_heights = _available_heights(url)
         available = all_heights if reencode else h264_mp4
         if quality_height not in available:
@@ -233,7 +235,7 @@ def clip_url(
                 f"output '{output_format}'. Use --reencode or choose a matching --format."
             )
         for start, end in ranges:
-            output_path = outdir / f"clip_{start}_{end}.{output_format}"
+            output_path = outdir / f"clip_{start}_{end}_{run_stamp}.{output_format}"
             _run_ffmpeg(source, start, end, output_path, reencode)
             outputs.append(output_path)
 
